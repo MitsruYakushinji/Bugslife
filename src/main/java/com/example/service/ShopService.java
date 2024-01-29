@@ -2,6 +2,7 @@ package com.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import com.example.model.Shop;
 import com.example.repository.ShopRepository;
@@ -16,12 +17,14 @@ public class ShopService {
 	@Autowired
 	private ShopRepository shopRepository;
 
-	public List<Shop> findAll() {
-		return shopRepository.findAll();
-	}
-
 	public List<Shop> findAll(Shop probe) {
-		return shopRepository.findAll(Example.of(probe));
+		ExampleMatcher matcher = ExampleMatcher.matching()
+				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING) // 部分一致
+				.withIgnoreCase()
+				.withIgnoreNullValues();
+
+		Example<Shop> example = Example.of(probe, matcher);
+		return shopRepository.findAll(example);
 	}
 
 	public Optional<Shop> findOne(Long id) {
