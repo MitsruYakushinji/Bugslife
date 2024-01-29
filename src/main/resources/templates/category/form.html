@@ -22,8 +22,9 @@
       <input id="display_order" name="display_order" type="number" class="form-control" th:field="*{displayOrder}" />
     </div>
     <div class="form-group">
-      <label>説明</label>
-      <textarea class="form-control"></textarea>
+      <label for="description">説明</label>
+      <textarea id="description" name="description" type="text" class="form-control" maxlength="300"
+        th:field="*{description}"></textarea>
     </div>
 
     <input id="submit" type="submit" class="btn btn-success" value="保存">
@@ -32,3 +33,4 @@
 </th:block>
 
 </html>
+<script th:src="@{/js/category/category-form.js}" type="text/javascript"></script>
