@@ -13,7 +13,7 @@ public class CheckUtil {
 	 */
 	public static boolean checkDescriptionLength(String description) {
 		// descriptionは2000文字以下か
-		if (Objects.nonNull(description) && description.length() > Validate.TEXT_LENGTH) {
+		if (Objects.nonNull(description) && description.length() > Validate.TEXT_LENGTH_1) {
 			return false;
 		}
 		return true;
