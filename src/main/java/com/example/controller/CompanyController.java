@@ -100,8 +100,14 @@ public class CompanyController {
 	 * @return
 	 */
 	@PostMapping
-	public String create(@ModelAttribute Company entity, BindingResult result,
+	public String create(Model model, @Validated @ModelAttribute Company entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		// バリデーションチェック
+		if (result.hasErrors()) {
+			model.addAttribute("campany", entity);
+			return "company/form";
+		}
+
 		Company company = null;
 		try {
 			company = companyService.save(entity);
@@ -143,8 +149,14 @@ public class CompanyController {
 	 * @return
 	 */
 	@PutMapping
-	public String update(@Validated @ModelAttribute Company entity, BindingResult result,
+	public String update(Model model, @Validated @ModelAttribute Company entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
+		// バリデーションチェック
+		if (result.hasErrors()) {
+			model.addAttribute("campany", entity);
+			return "company/form";
+		}
+
 		Company company = null;
 		try {
 			company = companyService.save(entity);
@@ -160,7 +172,7 @@ public class CompanyController {
 	/**
 	 * 取引先情報の削除処理
 	 *
-	 * @param id 取引先ID
+	 * @param id                 取引先ID
 	 * @param redirectAttributes リダイレクト先に値を渡す
 	 * @return
 	 */
