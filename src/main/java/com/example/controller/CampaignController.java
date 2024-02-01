@@ -47,7 +47,7 @@ public class CampaignController {
 	private CampaignService campaignService;
 
 	@Autowired
-	private CategoryService categoryService;
+	private CampaignService categoryService;
 
 	/**
 	 * 一覧画面表示
@@ -75,7 +75,7 @@ public class CampaignController {
 	@GetMapping("/{id}")
 	public String show(Model model, @PathVariable("id") Long id) {
 		if (id != null) {
-			Optional<Category> campaign = categoryService.findOne(id);
+			Optional<Campaign> campaign = campaignService.findOne(id);
 			model.addAttribute("campaign", campaign.get());
 			this.setCommonData(model);
 		}
