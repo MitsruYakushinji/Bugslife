@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -37,10 +38,11 @@ public class Campaign extends TimeEntity implements Serializable {
 
 	@Column(name = "name", nullable = false)
 	@Size(min = 1, max = 100, message = "キャンペーン名は1文字以上100文字以下で入力してください。")
-	@NotEmpty(message = "キャンペーン名を入力してください。")
+	@NotBlank(message = "キャンペーン名を入力してください。")
 	private String name;
 
 	@Column(name = "code", nullable = false)
+	@NotBlank(message = "キャンペーンコードを入力してください。")
 	private String code;
 
 	@Column(name = "from_date", nullable = false)
