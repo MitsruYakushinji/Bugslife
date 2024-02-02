@@ -130,7 +130,7 @@ public class CampaignService {
 				campaignRepository.save(campaign);
 			});
 		} catch (RuntimeException e) {
-			throw new Exception(e.getMessage());
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
