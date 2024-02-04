@@ -62,7 +62,7 @@ public class ProductService {
 	// 指定された検索条件に一致するエンティティを検索する
 	public List<ProductWithCategoryName> search(Long shopId, ProductSearchForm form) {
 		final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<ProductWithCategoryName> query = builder.createQuery(ProductWithCategoryName.class);
+		final CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
 		final Root<Product> root = query.from(Product.class);
 
 		Join<Product, CategoryProduct> categoryProductJoin = root.joinList("categoryProducts", JoinType.LEFT);
@@ -99,8 +99,6 @@ public class ProductService {
 			Root<Product> subRoot = subquery.from(Product.class);
 			Join<Product, CategoryProduct> subCategoryProductJoin = subRoot.join("categoryProducts", JoinType.LEFT);
 			Join<CategoryProduct, Category> subCategoryJoin = subCategoryProductJoin.join("category", JoinType.LEFT);
-			Expression<String> concatenatedSubCategoryNames = builder.function("GROUP_CONCAT", String.class,
-					subCategoryJoin.get("name"));
 			subquery.select(subRoot.get("id"))
 					.where(subCategoryJoin.get("id").in(form.getCategories()))
 					.groupBy(subRoot.get("id"))
@@ -143,7 +141,28 @@ public class ProductService {
 			query.where(builder.lessThanOrEqualTo(root.get("price"), form.getPrice2()));
 		}
 
-		return entityManager.createQuery(query).getResultList();
+		List<Object[]> resultList = entityManager.createQuery(query).getResultList();
+
+		List<ProductWithCategoryName> products = new ArrayList<>();
+		for (Object[] result : resultList) {
+			String[] categoryArray = ((String)result[6]).split(",");
+			List<String> categoryNames = new ArrayList<>();
+
+			for (String category : categoryArray) {
+				categoryNames.add(category.trim()); // カテゴリー名の前後の余白を削除する場合
+			}
+
+			products.add(new ProductWithCategoryName(
+					(Long)result[0],
+					(String)result[1],
+					(String)result[2],
+					(Integer)result[3],
+					(Integer)result[4],
+					(Double)result[5],
+					categoryNames));
+		}
+
+		return products;
 	}
 
 	/**
