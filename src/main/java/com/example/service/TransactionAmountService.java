@@ -135,7 +135,14 @@ public class TransactionAmountService {
 				expenseSum += tAmount.getPrice();
 			}
 		}
-		double ratio = incomSum / (expenseSum + incomSum);
+		// 分母がゼロでないか確認してから計算する
+		double ratio;
+		if (expenseSum + incomSum != 0) {
+			ratio = (double)incomSum / (expenseSum + incomSum);
+		} else {
+			// 分母がゼロの場合、任意のデフォルト値を設定するか、エラーハンドリングする
+			ratio = 0.0;
+		}
 		return (int)Math.round(ratio * 100);
 	}
 
