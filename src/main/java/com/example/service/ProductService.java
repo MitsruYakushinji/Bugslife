@@ -14,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
@@ -67,6 +68,9 @@ public class ProductService {
 		Join<Product, CategoryProduct> categoryProductJoin = root.joinList("categoryProducts", JoinType.LEFT);
 		Join<CategoryProduct, Category> categoryJoin = categoryProductJoin.join("category", JoinType.LEFT);
 
+		// カテゴリ名を結合して1つの文字列にまとめる
+		Expression<String> concatenatedCategoryNames = builder.function("GROUP_CONCAT", String.class,
+				categoryJoin.get("name"));
 		query.multiselect(
 				root.get("id"),
 				root.get("code"),
@@ -74,7 +78,9 @@ public class ProductService {
 				root.get("weight"),
 				root.get("height"),
 				root.get("price"),
-				categoryJoin.get("name").alias("categoryName")).where(builder.equal(root.get("shopId"), shopId));
+				concatenatedCategoryNames.alias("categoryName")).where(builder.equal(root.get("shopId"), shopId))
+				.groupBy(root.get("id"), root.get("code"), root.get("name"), root.get("weight"), root.get("height"),
+						root.get("price"));
 
 		// formの値を元に検索条件を設定する
 		if (!StringUtils.isEmpty(form.getName())) {
@@ -89,11 +95,12 @@ public class ProductService {
 
 		if (form.getCategories() != null && form.getCategories().size() > 0) {
 			// categories で完全一致検索
-			query.where(categoryJoin.get("id").in(form.getCategories()));
 			Subquery<Long> subquery = query.subquery(Long.class);
 			Root<Product> subRoot = subquery.from(Product.class);
 			Join<Product, CategoryProduct> subCategoryProductJoin = subRoot.join("categoryProducts", JoinType.LEFT);
 			Join<CategoryProduct, Category> subCategoryJoin = subCategoryProductJoin.join("category", JoinType.LEFT);
+			Expression<String> concatenatedSubCategoryNames = builder.function("GROUP_CONCAT", String.class,
+					subCategoryJoin.get("name"));
 			subquery.select(subRoot.get("id"))
 					.where(subCategoryJoin.get("id").in(form.getCategories()))
 					.groupBy(subRoot.get("id"))
