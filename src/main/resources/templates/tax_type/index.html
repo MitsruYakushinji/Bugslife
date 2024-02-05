@@ -19,26 +19,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="app : ${listApp}">
-                <td th:text="${app.name}"></td>
+            <tr th:each="tax : ${listTaxType}">
+                <td th:text="${tax.rate}"></td>
                 <td class="text-overflow">
-                    <a th:href="${app.url}" target="_blank" th:text="${app.url}"></a>
+                    <a th:href="${tax.rounding}" target="_blank" th:text="${tax.rounding}"></a>
                 </td>
-                <td class="for-tablet text-overflow" th:text="${app.description}"></td>
+                <td class="for-tablet text-overflow" th:text="${tax.taxIncluded}"></td>
                 <td>
-                    <!-- 画像があれば縮小して表示 -->
-                    <img th:if="${app.image != null && app.image != ''}" th:src="${app.image}" th:alt="現在の画像"
-                        style="max-width: 100px; max-height: 100px" />
-                </td>
-                <td class="for-tablet" th:text="${app.developer}"></td>
-                <td>
-                    <a class="btn btn-primary" th:href="@{/taxTypes/{id}(id = ${app.id})}">Show</a>
-                    <a class="btn btn-secondary" th:href="@{/taxTypes/{id}/edit(id = ${app.id})}">Edit</a>
-                    <form class="d-inline" th:action="@{/taxTypes/{id}(id = ${app.id})}" th:method="delete">
+                    <a class="btn btn-primary" th:href="@{/taxTypes/{id}(id = ${tax.id})}">Show</a>
+                    <a class="btn btn-secondary" th:href="@{/taxTypes/{id}/edit(id = ${tax.id})}">Edit</a>
+                    <form class="d-inline" th:action="@{/taxTypes/{id}(id = ${tax.id})}" th:method="delete">
                         <button class="btn btn-danger" type="submit">Destroy</button>
                     </form>
                 </td>
-                <td th:text="${app.active}"></td>
             </tr>
         </tbody>
     </table>
